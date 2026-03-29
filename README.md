@@ -162,7 +162,7 @@ To run the application using Docker:
 ## 📞 Contact
 
 - **Repository**: https://github.com/RaviGit18/ecommerce
-- **LinkedIn**: [ravi-ranjan-csm](https://linkedin.com/in/yourprofile)
+- **LinkedIn**: [ravi-ranjan-tech](https://linkedin.com/in/ravi-ranjan-tech)
 
 ---
 
