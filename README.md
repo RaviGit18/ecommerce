@@ -159,6 +159,12 @@ To run the application using Docker:
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
+## Diagrams:
+
+<img width="746" height="610" alt="image" src="https://github.com/user-attachments/assets/865f8929-5fec-4e9c-8a66-a107cbf14099" />
+
+
+
 ## 📞 Contact
 
 - **Repository**: https://github.com/RaviGit18/ecommerce
