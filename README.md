@@ -163,6 +163,7 @@ To run the application using Docker:
 
 <img width="746" height="610" alt="image" src="https://github.com/user-attachments/assets/865f8929-5fec-4e9c-8a66-a107cbf14099" />
 
+<img width="2465" height="2745" alt="image" src="https://github.com/user-attachments/assets/9679279f-89d0-450d-95fd-8adcd458b4c0" />
 
 
 ## 📞 Contact
