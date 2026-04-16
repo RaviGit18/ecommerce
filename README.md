@@ -14,8 +14,10 @@ This application provides a comprehensive e-commerce platform with features for 
 - **Spring Web MVC**
 - **H2 Database** (In-memory)
 - **Lombok** (For reducing boilerplate code)
-- **Maven** (Build tool)
+- **Gradle** (Build tool)
 - **Spring Validation** (For input validation)
+- **Swagger/OpenAPI** (API documentation)
+- **Mockito** (Unit testing framework)
 
 ## 🏗️ Project Structure
 
@@ -46,8 +48,8 @@ src/
 
 ### Prerequisites
 
-- Java 21 or higher
-- Maven 3.6 or higher
+- Java 17 or higher
+- Gradle 8.14 or higher
 
 ### Installation
 
@@ -59,15 +61,19 @@ src/
 
 2. **Build the application**
    ```bash
-   mvn clean install
+   ./gradlew.bat build
    ```
 
 3. **Run the application**
    ```bash
-   mvn spring-boot:run
+   ./gradlew.bat bootRun
    ```
 
 The application will start on `http://localhost:8080`
+
+4. **Access Swagger UI documentation**
+   - Swagger UI: `http://localhost:8080/swagger-ui.html`
+   - OpenAPI JSON: `http://localhost:8080/v3/api-docs`
 
 ## 📊 Database Configuration
 
@@ -138,10 +144,10 @@ The application has been thoroughly tested with **25+ endpoints**:
 
 ```bash
 # Run all tests
-mvn test
+./gradlew.bat test
 
 # Run the application for manual testing
-mvn spring-boot:run
+./gradlew.bat bootRun
 ```
 
 ### Test Coverage
