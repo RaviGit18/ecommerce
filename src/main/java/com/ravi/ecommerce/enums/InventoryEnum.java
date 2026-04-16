@@ -5,7 +5,7 @@ import lombok.Getter;
 @Getter
 public enum InventoryEnum  {
 
-    INVENTORY_NOT_FOUND(30, "Inventory does not exit!")
+    INVENTORY_NOT_FOUND(30, "Inventory does not exist!")
     ;
 
     private Integer code;
