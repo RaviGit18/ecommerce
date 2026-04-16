@@ -1,88 +1,267 @@
 package com.ravi.ecommerce.controller;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
 
+import com.ravi.ecommerce.dto.InventoryCreateDto;
+import com.ravi.ecommerce.dto.InventoryDto;
+import com.ravi.ecommerce.dto.InventoryUpdateDto;
+import com.ravi.ecommerce.dto.PagedResponse;
 import com.ravi.ecommerce.entity.Inventory;
+import com.ravi.ecommerce.mapper.InventoryMapper;
+import com.ravi.ecommerce.projection.InventoryBasicProjection;
+import com.ravi.ecommerce.projection.InventoryPriceProjection;
+import com.ravi.ecommerce.projection.InventorySummaryProjection;
 import com.ravi.ecommerce.service.EcommerceAppService;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestController
+@RequestMapping("/api/v1/inventory")
+@Validated
 public class EcommerceAppController {
 
 	@Autowired
-	EcommerceAppService ecommerceAppService;
+	private EcommerceAppService ecommerceAppService;
+
+	@Autowired
+	private InventoryMapper inventoryMapper;
 
 	@GetMapping("/brand/{brandName}")
-	public List<Inventory> getInventoryDeatilsByBrandGet(@PathVariable("brandName") String brandName) {
-		log.info("ENTERED INTO EcommerceAppController.getInventoryDeatilsByBrandGet()");
-		List<Inventory> inventoryList = ecommerceAppService.getInventoryDeatilsByBrand(brandName);
+	public ResponseEntity<List<InventoryDto>> getInventoryDetailsByBrand(
+			@PathVariable @NotBlank(message = "Brand name cannot be blank") String brandName) {
+		log.info("Fetching inventory details for brand: {}", brandName);
+		List<Inventory> inventoryList = ecommerceAppService.getInventoryDetailsByBrand(brandName);
 		
-		return inventoryList;
-	}
-
-	@PostMapping("/brand/{brandName}")
-	public List<Inventory> getInventoryDeatilsByBrandPost(@PathVariable("brandName") String brandName) {
-		log.info("ENTERED INTO EcommerceAppController.getInventoryDeatilsByBrandPost()");
-		ResponseEntity<Inventory[]> inventory = new RestTemplate()
-				.getForEntity("http://localhost:8080/brand/{brandName}", Inventory[].class, brandName);
-		Inventory[] inventories = inventory.getBody();
-		List<Inventory> inventoryList = Arrays.asList(inventories);
-		return inventoryList;
+		if (inventoryList.isEmpty()) {
+			return ResponseEntity.noContent().build();
+		}
+		
+		List<InventoryDto> inventoryDtoList = inventoryMapper.toDtoList(inventoryList);
+		return ResponseEntity.ok(inventoryDtoList);
 	}
 
 	@GetMapping("/color/{color}")
-	public List<Inventory> getInventoryDeatilsByColorGet(@PathVariable("color") String color) {
-		log.info("ENTERED INTO EcommerceAppController.getInventoryDeatilsByColorGet()");
-		List<Inventory> inventoryList = ecommerceAppService.getInventoryDeatilsByColor(color);
+	public ResponseEntity<List<InventoryDto>> getInventoryDetailsByColor(
+			@PathVariable @NotBlank(message = "Color cannot be blank") String color) {
+		log.info("Fetching inventory details for color: {}", color);
+		List<Inventory> inventoryList = ecommerceAppService.getInventoryDetailsByColor(color);
 
-		return inventoryList;
-	}
+		if (inventoryList.isEmpty()) {
+			return ResponseEntity.noContent().build();
+		}
 
-	@PostMapping("/color/{color}")
-	public List<Inventory> getInventoryDeatilsByColorPost(@PathVariable("color") String color) {
-		log.info("ENTERED INTO EcommerceAppController.getInventoryDeatilsByColorPost()");
-		ResponseEntity<Inventory[]> inventory = new RestTemplate()
-				.getForEntity("http://localhost:8080/color/{color}", Inventory[].class, color);
-		Inventory[] inventories = inventory.getBody();
-		List<Inventory> inventoryList = Arrays.asList(inventories);
-		return inventoryList;
+		List<InventoryDto> inventoryDtoList = inventoryMapper.toDtoList(inventoryList);
+		return ResponseEntity.ok(inventoryDtoList);
 	}
 
 	@GetMapping("/size/{size}")
-	public List<Inventory> getInventoryDeatilsBySizeGet(@PathVariable("size") String size) {
-		log.info("ENTERED INTO EcommerceAppController.getInventoryDeatilsBySizeGet()");
-		List<Inventory> inventoryList = ecommerceAppService.getInventoryDeatilsBySize(size);
+	public ResponseEntity<List<InventoryDto>> getInventoryDetailsBySize(
+			@PathVariable @NotBlank(message = "Size cannot be blank") String size) {
+		log.info("Fetching inventory details for size: {}", size);
+		List<Inventory> inventoryList = ecommerceAppService.getInventoryDetailsBySize(size);
 
-		return inventoryList;
-	}
+		if (inventoryList.isEmpty()) {
+			return ResponseEntity.noContent().build();
+		}
 
-	@PostMapping("/size/{size}")
-	public List<Inventory> getInventoryDeatilsBySizePost(@PathVariable("size") String size) {
-		log.info("ENTERED INTO EcommerceAppController.getInventoryDeatilsBySizePost()");
-		ResponseEntity<Inventory[]> inventory = new RestTemplate()
-				.getForEntity("http://localhost:8080/size/{size}", Inventory[].class, size);
-		Inventory[] inventories = inventory.getBody();
-		List<Inventory> inventoryList = Arrays.asList(inventories);
-		return inventoryList;
+		List<InventoryDto> inventoryDtoList = inventoryMapper.toDtoList(inventoryList);
+		return ResponseEntity.ok(inventoryDtoList);
 	}
 
 	@GetMapping("/seller/{sellerId}")
-	public int getAvailableNumberOfProductBySellerGet(@PathVariable("sellerId") String sellerId) {
-		log.info("ENTERED INTO EcommerceAppController.getAvailableNumberOfProductBySellerGet()");
+	public ResponseEntity<Integer> getAvailableNumberOfProductBySeller(
+			@PathVariable @NotBlank(message = "Seller ID cannot be blank") String sellerId) {
+		log.info("Fetching available product count for seller: {}", sellerId);
 		int availableNumberOfProduct = ecommerceAppService.getAvailableNumberOfProductBySeller(sellerId);
 
-		return availableNumberOfProduct;
+		return ResponseEntity.ok(availableNumberOfProduct);
 	}
 
+	@PostMapping
+	public ResponseEntity<InventoryDto> createInventory(
+			@RequestBody @Valid InventoryCreateDto inventoryCreateDto) {
+		log.info("Creating new inventory item: {}", inventoryCreateDto.getSkuId());
+		Inventory createdInventory = ecommerceAppService.createInventory(inventoryCreateDto);
+		InventoryDto inventoryDto = inventoryMapper.toDto(createdInventory);
+		return ResponseEntity.status(HttpStatus.CREATED).body(inventoryDto);
+	}
+
+	@PutMapping("/{inventoryId}")
+	public ResponseEntity<InventoryDto> updateInventory(
+			@PathVariable Long inventoryId,
+			@RequestBody @Valid InventoryUpdateDto inventoryUpdateDto) {
+		log.info("Updating inventory item with ID: {}", inventoryId);
+		Inventory updatedInventory = ecommerceAppService.updateInventory(inventoryId, inventoryUpdateDto);
+		InventoryDto inventoryDto = inventoryMapper.toDto(updatedInventory);
+		return ResponseEntity.ok(inventoryDto);
+	}
+
+	@DeleteMapping("/{inventoryId}")
+	public ResponseEntity<Void> deleteInventory(@PathVariable Long inventoryId) {
+		log.info("Deleting inventory item with ID: {}", inventoryId);
+		ecommerceAppService.deleteInventory(inventoryId);
+		return ResponseEntity.noContent().build();
+	}
+
+	@GetMapping("/{inventoryId}")
+	public ResponseEntity<InventoryDto> getInventoryById(@PathVariable Long inventoryId) {
+		log.info("Fetching inventory item with ID: {}", inventoryId);
+		Inventory inventory = ecommerceAppService.getInventoryById(inventoryId);
+		InventoryDto inventoryDto = inventoryMapper.toDto(inventory);
+		return ResponseEntity.ok(inventoryDto);
+	}
+
+	// Projection endpoints
+	
+	@GetMapping("/projections/basic")
+	public ResponseEntity<List<InventoryBasicProjection>> getAllBasicProjections() {
+		log.info("Fetching all basic projections");
+		List<InventoryBasicProjection> projections = ecommerceAppService.getAllBasicProjections();
+		return ResponseEntity.ok(projections);
+	}
+	
+	@GetMapping("/projections/basic/brand/{brandName}")
+	public ResponseEntity<List<InventoryBasicProjection>> getBasicProjectionsByBrand(
+			@PathVariable @NotBlank(message = "Brand name cannot be blank") String brandName) {
+		log.info("Fetching basic projections for brand: {}", brandName);
+		List<InventoryBasicProjection> projections = ecommerceAppService.getBasicProjectionsByBrand(brandName);
+		return ResponseEntity.ok(projections);
+	}
+	
+	@GetMapping("/projections/price")
+	public ResponseEntity<List<InventoryPriceProjection>> getAllPriceProjections() {
+		log.info("Fetching all price projections");
+		List<InventoryPriceProjection> projections = ecommerceAppService.getAllPriceProjections();
+		return ResponseEntity.ok(projections);
+	}
+	
+	@GetMapping("/projections/price/brand/{brandName}")
+	public ResponseEntity<List<InventoryPriceProjection>> getPriceProjectionsByBrand(
+			@PathVariable @NotBlank(message = "Brand name cannot be blank") String brandName) {
+		log.info("Fetching price projections for brand: {}", brandName);
+		List<InventoryPriceProjection> projections = ecommerceAppService.getPriceProjectionsByBrand(brandName);
+		return ResponseEntity.ok(projections);
+	}
+	
+	@GetMapping("/projections/summary")
+	public ResponseEntity<List<InventorySummaryProjection>> getAllSummaryProjections() {
+		log.info("Fetching all summary projections");
+		List<InventorySummaryProjection> projections = ecommerceAppService.getAllSummaryProjections();
+		return ResponseEntity.ok(projections);
+	}
+	
+	@GetMapping("/projections/summary/brand/{brandName}")
+	public ResponseEntity<List<InventorySummaryProjection>> getSummaryProjectionsByBrand(
+			@PathVariable @NotBlank(message = "Brand name cannot be blank") String brandName) {
+		log.info("Fetching summary projections for brand: {}", brandName);
+		List<InventorySummaryProjection> projections = ecommerceAppService.getSummaryProjectionsByBrand(brandName);
+		return ResponseEntity.ok(projections);
+	}
+
+	// Pagination endpoints
+	
+	@GetMapping("/paginated")
+	public ResponseEntity<Page<InventoryDto>> getAllInventoryPaginated(
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "10") int size,
+			@RequestParam(defaultValue = "inventoryId") String sortBy,
+			@RequestParam(defaultValue = "asc") String sortDir) {
+		log.info("Fetching all inventory items with pagination - page: {}, size: {}, sort: {} {}", 
+			page, size, sortBy, sortDir);
+		
+		Sort.Direction direction = sortDir.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
+		Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
+		Page<Inventory> inventoryPage = ecommerceAppService.getAllInventoryPaginated(pageable);
+		
+		Page<InventoryDto> dtoPage = inventoryPage.map(inventoryMapper::toDto);
+		return ResponseEntity.ok(dtoPage);
+	}
+	
+	@GetMapping("/paginated/brand/{brandName}")
+	public ResponseEntity<Page<InventoryDto>> getInventoryByBrandPaginated(
+			@PathVariable @NotBlank(message = "Brand name cannot be blank") String brandName,
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "10") int size,
+			@RequestParam(defaultValue = "inventoryId") String sortBy,
+			@RequestParam(defaultValue = "asc") String sortDir) {
+		log.info("Fetching inventory items for brand: {} with pagination - page: {}, size: {}, sort: {} {}", 
+			brandName, page, size, sortBy, sortDir);
+		
+		Sort.Direction direction = sortDir.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
+		Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
+		Page<Inventory> inventoryPage = ecommerceAppService.getInventoryByBrandPaginated(brandName, pageable);
+		
+		Page<InventoryDto> dtoPage = inventoryPage.map(inventoryMapper::toDto);
+		return ResponseEntity.ok(dtoPage);
+	}
+	
+	@GetMapping("/paginated/color/{color}")
+	public ResponseEntity<Page<InventoryDto>> getInventoryByColorPaginated(
+			@PathVariable @NotBlank(message = "Color cannot be blank") String color,
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "10") int size,
+			@RequestParam(defaultValue = "inventoryId") String sortBy,
+			@RequestParam(defaultValue = "asc") String sortDir) {
+		log.info("Fetching inventory items for color: {} with pagination - page: {}, size: {}, sort: {} {}", 
+			color, page, size, sortBy, sortDir);
+		
+		Sort.Direction direction = sortDir.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
+		Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
+		Page<Inventory> inventoryPage = ecommerceAppService.getInventoryByColorPaginated(color, pageable);
+		
+		Page<InventoryDto> dtoPage = inventoryPage.map(inventoryMapper::toDto);
+		return ResponseEntity.ok(dtoPage);
+	}
+	
+	@GetMapping("/paginated/size/{size}")
+	public ResponseEntity<Page<InventoryDto>> getInventoryBySizePaginated(
+			@PathVariable @NotBlank(message = "Size cannot be blank") String size,
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "10") int pageSize,
+			@RequestParam(defaultValue = "inventoryId") String sortBy,
+			@RequestParam(defaultValue = "asc") String sortDir) {
+		log.info("Fetching inventory items for size: {} with pagination - page: {}, size: {}, sort: {} {}", 
+			size, page, pageSize, sortBy, sortDir);
+		
+		Sort.Direction direction = sortDir.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
+		Pageable pageable = PageRequest.of(page, pageSize, Sort.by(direction, sortBy));
+		Page<Inventory> inventoryPage = ecommerceAppService.getInventoryBySizePaginated(size, pageable);
+		
+		Page<InventoryDto> dtoPage = inventoryPage.map(inventoryMapper::toDto);
+		return ResponseEntity.ok(dtoPage);
+	}
+	
+	@GetMapping("/paginated/supplier/{supplierId}")
+	public ResponseEntity<Page<InventoryDto>> getInventoryBySupplierPaginated(
+			@PathVariable Long supplierId,
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "10") int size,
+			@RequestParam(defaultValue = "inventoryId") String sortBy,
+			@RequestParam(defaultValue = "asc") String sortDir) {
+		log.info("Fetching inventory items for supplier ID: {} with pagination - page: {}, size: {}, sort: {} {}", 
+			supplierId, page, size, sortBy, sortDir);
+		
+		Sort.Direction direction = sortDir.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
+		Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
+		Page<Inventory> inventoryPage = ecommerceAppService.getInventoryBySupplierPaginated(supplierId, pageable);
+		
+		Page<InventoryDto> dtoPage = inventoryPage.map(inventoryMapper::toDto);
+		return ResponseEntity.ok(dtoPage);
+	}
+	
+	
 }
