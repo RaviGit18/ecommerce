@@ -129,4 +129,104 @@ public interface EcommerceAppService {
 	 * @return list of summary inventory projections matching brand
 	 */
 	List<InventorySummaryProjection> getSummaryProjectionsByBrand(String brandName);
+
+	// Pagination methods
+	
+	/**
+	 * Get all inventory items with pagination.
+	 * 
+	 * @param pageable pagination and sorting information
+	 * @return paginated list of inventory items
+	 */
+	Page<Inventory> getAllInventoryPaginated(Pageable pageable);
+	
+	/**
+	 * Get inventory items by brand name with pagination.
+	 * 
+	 * @param brandName the brand name to search for
+	 * @param pageable pagination and sorting information
+	 * @return paginated list of inventory items matching brand
+	 */
+	Page<Inventory> getInventoryByBrandPaginated(String brandName, Pageable pageable);
+	
+	/**
+	 * Get inventory items by color with pagination.
+	 * 
+	 * @param color the color to search for
+	 * @param pageable pagination and sorting information
+	 * @return paginated list of inventory items matching color
+	 */
+	Page<Inventory> getInventoryByColorPaginated(String color, Pageable pageable);
+	
+	/**
+	 * Get inventory items by size with pagination.
+	 * 
+	 * @param size the size to search for
+	 * @param pageable pagination and sorting information
+	 * @return paginated list of inventory items matching size
+	 */
+	Page<Inventory> getInventoryBySizePaginated(String size, Pageable pageable);
+	
+	/**
+	 * Get inventory items by supplier ID with pagination.
+	 * 
+	 * @param supplierId the supplier ID to search for
+	 * @param pageable pagination and sorting information
+	 * @return paginated list of inventory items matching supplier
+	 */
+	Page<Inventory> getInventoryBySupplierPaginated(Long supplierId, Pageable pageable);
+
+	// Projection pagination methods
+	
+	/**
+	 * Get basic projection of all inventory items with pagination.
+	 * 
+	 * @param pageable pagination and sorting information
+	 * @return paginated list of basic inventory projections
+	 */
+	Page<InventoryBasicProjection> getAllBasicProjectionsPaginated(Pageable pageable);
+	
+	/**
+	 * Get basic projection of inventory items by brand name with pagination.
+	 * 
+	 * @param brandName brand name to search for
+	 * @param pageable pagination and sorting information
+	 * @return paginated list of basic inventory projections matching brand
+	 */
+	Page<InventoryBasicProjection> getBasicProjectionsByBrandPaginated(String brandName, Pageable pageable);
+	
+	/**
+	 * Get price projection of all inventory items with pagination.
+	 * 
+	 * @param pageable pagination and sorting information
+	 * @return paginated list of price inventory projections
+	 */
+	Page<InventoryPriceProjection> getAllPriceProjectionsPaginated(Pageable pageable);
+	
+	/**
+	 * Get price projection of inventory items by brand name with pagination.
+	 * 
+	 * @param brandName brand name to search for
+	 * @param pageable pagination and sorting information
+	 * @return paginated list of price inventory projections matching brand
+	 */
+	Page<InventoryPriceProjection> getPriceProjectionsByBrandPaginated(String brandName, Pageable pageable);
+	
+	/**
+	 * Get summary projection of all inventory items with pagination.
+	 * 
+	 * @param pageable pagination and sorting information
+	 * @return paginated list of summary inventory projections
+	 */
+	Page<InventorySummaryProjection> getAllSummaryProjectionsPaginated(Pageable pageable);
+	
+	/**
+	 * Get summary projection of inventory items by brand name with pagination.
+	 * 
+	 * @param brandName brand name to search for
+	 * @param pageable pagination and sorting information
+	 * @return paginated list of summary inventory projections matching brand
+	 */
+	Page<InventorySummaryProjection> getSummaryProjectionsByBrandPaginated(String brandName, Pageable pageable);
+
 }

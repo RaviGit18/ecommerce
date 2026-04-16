@@ -172,4 +172,96 @@ public class EcommerceAppController {
 		return ResponseEntity.ok(projections);
 	}
 
+	// Pagination endpoints
+	
+	@GetMapping("/paginated")
+	public ResponseEntity<Page<InventoryDto>> getAllInventoryPaginated(
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "10") int size,
+			@RequestParam(defaultValue = "inventoryId") String sortBy,
+			@RequestParam(defaultValue = "asc") String sortDir) {
+		log.info("Fetching all inventory items with pagination - page: {}, size: {}, sort: {} {}", 
+			page, size, sortBy, sortDir);
+		
+		Sort.Direction direction = sortDir.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
+		Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
+		Page<Inventory> inventoryPage = ecommerceAppService.getAllInventoryPaginated(pageable);
+		
+		Page<InventoryDto> dtoPage = inventoryPage.map(inventoryMapper::toDto);
+		return ResponseEntity.ok(dtoPage);
+	}
+	
+	@GetMapping("/paginated/brand/{brandName}")
+	public ResponseEntity<Page<InventoryDto>> getInventoryByBrandPaginated(
+			@PathVariable @NotBlank(message = "Brand name cannot be blank") String brandName,
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "10") int size,
+			@RequestParam(defaultValue = "inventoryId") String sortBy,
+			@RequestParam(defaultValue = "asc") String sortDir) {
+		log.info("Fetching inventory items for brand: {} with pagination - page: {}, size: {}, sort: {} {}", 
+			brandName, page, size, sortBy, sortDir);
+		
+		Sort.Direction direction = sortDir.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
+		Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
+		Page<Inventory> inventoryPage = ecommerceAppService.getInventoryByBrandPaginated(brandName, pageable);
+		
+		Page<InventoryDto> dtoPage = inventoryPage.map(inventoryMapper::toDto);
+		return ResponseEntity.ok(dtoPage);
+	}
+	
+	@GetMapping("/paginated/color/{color}")
+	public ResponseEntity<Page<InventoryDto>> getInventoryByColorPaginated(
+			@PathVariable @NotBlank(message = "Color cannot be blank") String color,
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "10") int size,
+			@RequestParam(defaultValue = "inventoryId") String sortBy,
+			@RequestParam(defaultValue = "asc") String sortDir) {
+		log.info("Fetching inventory items for color: {} with pagination - page: {}, size: {}, sort: {} {}", 
+			color, page, size, sortBy, sortDir);
+		
+		Sort.Direction direction = sortDir.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
+		Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
+		Page<Inventory> inventoryPage = ecommerceAppService.getInventoryByColorPaginated(color, pageable);
+		
+		Page<InventoryDto> dtoPage = inventoryPage.map(inventoryMapper::toDto);
+		return ResponseEntity.ok(dtoPage);
+	}
+	
+	@GetMapping("/paginated/size/{size}")
+	public ResponseEntity<Page<InventoryDto>> getInventoryBySizePaginated(
+			@PathVariable @NotBlank(message = "Size cannot be blank") String size,
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "10") int pageSize,
+			@RequestParam(defaultValue = "inventoryId") String sortBy,
+			@RequestParam(defaultValue = "asc") String sortDir) {
+		log.info("Fetching inventory items for size: {} with pagination - page: {}, size: {}, sort: {} {}", 
+			size, page, pageSize, sortBy, sortDir);
+		
+		Sort.Direction direction = sortDir.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
+		Pageable pageable = PageRequest.of(page, pageSize, Sort.by(direction, sortBy));
+		Page<Inventory> inventoryPage = ecommerceAppService.getInventoryBySizePaginated(size, pageable);
+		
+		Page<InventoryDto> dtoPage = inventoryPage.map(inventoryMapper::toDto);
+		return ResponseEntity.ok(dtoPage);
+	}
+	
+	@GetMapping("/paginated/supplier/{supplierId}")
+	public ResponseEntity<Page<InventoryDto>> getInventoryBySupplierPaginated(
+			@PathVariable Long supplierId,
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "10") int size,
+			@RequestParam(defaultValue = "inventoryId") String sortBy,
+			@RequestParam(defaultValue = "asc") String sortDir) {
+		log.info("Fetching inventory items for supplier ID: {} with pagination - page: {}, size: {}, sort: {} {}", 
+			supplierId, page, size, sortBy, sortDir);
+		
+		Sort.Direction direction = sortDir.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
+		Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
+		Page<Inventory> inventoryPage = ecommerceAppService.getInventoryBySupplierPaginated(supplierId, pageable);
+		
+		Page<InventoryDto> dtoPage = inventoryPage.map(inventoryMapper::toDto);
+		return ResponseEntity.ok(dtoPage);
+	}
+	
+	
 }
